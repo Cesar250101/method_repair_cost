@@ -1,0 +1,93 @@
+<odoo>
+  <data>
+  
+      <record id="method_repair_cost.view_repair_order_tree" model="ir.ui.view">
+      <field name="name">method.repair.cost.view.repair.order.tree</field>
+      <field name="model">repair.order</field>
+      <field name="inherit_id" ref="repair.view_repair_order_tree"/>
+      <field name="context">{'responsible_id':uid}</field>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='state']" position="after">  
+          <field name="amount_untaxed"/>
+          <field name="total_costo" groups="mrp.group_mrp_manager"/>
+          <field name="margen" groups="mrp.group_mrp_manager"/>
+        </xpath>
+      </field>
+    </record>
+
+
+    <record id="method_repair_cost.view_repair_order_form" model="ir.ui.view">
+      <field name="name">method.repair.cost.view.repair.order.form</field>
+      <field name="model">repair.order</field>
+      <field name="inherit_id" ref="repair.view_repair_order_form"/>
+      <field name="context">{'responsible_id':uid}</field>
+      <field name="arch" type="xml">
+        <xpath expr="//notebook" position="inside">
+          <page name="costo_order" string="Costeo" groups="mrp.group_mrp_manager">
+            <group name="name" string="Costeo RMA">
+              <group name="resumen" string="Resumen">
+                <field name='amount_untaxed' widget="monetary" string="Venta Neta"/>
+                <separator/>
+                <field name='costeo_inventario' widget="monetary"/>
+                <field name='costeo_facturas' widget="monetary"/>
+                <field name='costeo_hh' widget="monetary"/>
+                <separator/>
+                <field name='total_costo' widget="monetary"/>
+                <field name='margen' widget="monetary"/>
+              </group>
+              <group name="costo_hh" string="Costo Hora Hombre">
+                <field name="costeo_hh_ids">
+                  <tree editable="bottom">
+                    <!-- <field name="employee_id" domain="[('type','=','service')]" required="True"/> -->
+                    <field name="employee_id" required="True"/>
+                    <field name='cantidad_hh'/>
+                    <field name="costo_hora" string="Costo Hora" widget="monetary"/>
+                    <field name="costo_total_hora" string="SubTotal Horas" widget="monetary"/>
+                  </tree>
+                </field>
+              </group>
+            </group>
+          </page>
+        </xpath>
+      </field>
+    </record>
+
+    <record id="method_repair_cost.repair_order_pivot" model="ir.ui.view">
+      <field name="name">method.repair.cost.repair.order.pivot</field>
+      <field name="model">repair.order</field>
+      <field name="arch" type="xml">
+        <pivot string="Ordenes de Reparción" disable_linking="true">
+          <field name="name" type="row"/>
+          <field name="amount_untaxed" type="measure"/>
+          <field name="total_costo" type="measure"/>
+          <field name="margen" type="measure"/>
+        </pivot>
+      </field>
+    </record>
+
+    <record id="action_repair_order_tree" model="ir.actions.act_window">
+      <field name="name">Repair Orders</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">repair.order</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,pivot,kanban,form</field>
+      <field name="search_view_id" ref="repair.view_repair_order_form_filter"/>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+                Create a new reparation order
+        </p>
+        <p>
+                In a repair order, you can detail the components you remove,
+                add or replace and record the time you spent on the different
+                operations.
+        </p>
+        <p>
+                The repair order uses the warranty date on the Serial Number in
+                order to know if whether the repair should be invoiced to the
+                customer or not.
+        </p>
+      </field>
+    </record>
+
+  </data>
+</odoo>
