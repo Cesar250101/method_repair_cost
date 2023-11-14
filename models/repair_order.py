@@ -19,12 +19,14 @@ class Rma(models.Model):
     def _compute_margen(self):
         self.margen=self.amount_untaxed-self.total_costo  
 
+    @api.one
     @api.depends('costeo_hh_ids','picking_ids','invoice_ids')
     def _compute_total_costo(self):
         total_costo=self.costeo_facturas+self.costeo_hh+self.costeo_inventario
         self.total_costo=total_costo
         self.margen=self.amount_untaxed-total_costo
 
+    @api.one
     @api.depends('costeo_hh_ids','amount_untaxed')
     def _compute_costeo_hh(self):
         costo_hh=0
@@ -34,7 +36,7 @@ class Rma(models.Model):
         self.total_costo=self.costeo_hh+self.costeo_inventario+self.costeo_facturas
         self.margen=self.amount_untaxed-self.total_costo
 
-
+    @api.one
     @api.depends('picking_ids','amount_untaxed')
     def _compute_costeo_inventario(self):
         costo_inventario=0
@@ -45,7 +47,7 @@ class Rma(models.Model):
         self.total_costo=self.costeo_hh+self.costeo_inventario+self.costeo_facturas
         self.margen=self.amount_untaxed-self.total_costo
 
-
+    @api.one
     @api.depends('invoice_ids','amount_untaxed')
     def _compute_costeo_facturas(self):
         costo_facturas=0
