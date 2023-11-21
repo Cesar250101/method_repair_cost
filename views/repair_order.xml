@@ -39,6 +39,7 @@
                 <field name="costeo_hh_ids">
                   <tree editable="bottom">
                     <!-- <field name="employee_id" domain="[('type','=','service')]" required="True"/> -->
+                    <field name='fecha_hh'/>                    
                     <field name="employee_id" required="True"/>
                     <field name='cantidad_hh'/>
                     <field name="costo_hora" string="Costo Hora" widget="monetary"/>

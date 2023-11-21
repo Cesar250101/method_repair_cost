@@ -64,10 +64,11 @@ class CosteHH(models.Model):
 
     employee_id = fields.Many2one(comodel_name='hr.employee', string='Empleado')
     cantidad_hh = fields.Integer(string='Cantidad de Horas')
-    costo_hora = fields.Integer(compute='_compute_costo_hora', string='Costo por Hora')
-    costo_total_hora = fields.Integer(compute='_compute_costo_total_hora', string='Costo por Hora')
+    costo_hora = fields.Integer(compute='_compute_costo_hora', string='Costo por Hora',store=True)
+    costo_total_hora = fields.Integer(compute='_compute_costo_total_hora', string='Costo por Hora',store=True)
     repair_id = fields.Many2one(comodel_name='repair.order',string= 'Orden de Reparaciòn',
                                 index=True, ondelete='cascade', required=True)
+    fecha_hh = fields.Date(string='Fecha')
     
     @api.one
     @api.depends('employee_id','cantidad_hh','costo_hora')

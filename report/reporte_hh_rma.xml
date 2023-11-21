@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="method_repair_cost.report_hh_rma_pivot" model="ir.ui.view">
+        <field name="model">method_repair_cost.rma_hh_report</field>
+        <field name="arch" type="xml">
+            <pivot string="Pivot HH por RMA" disable_linking="True">
+                <field name="employee_id" type="row"/>
+                <field name="repair_id" type="row"/>
+                <field name="cantidad_hh" type="measure"/>
+                <field name="costo_hora" type="measure"/>
+                <field name="costo_total_hora" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="method_repair_cost.report_salidas_stock_pivot" model="ir.ui.view">
+        <field name="model">method_repair_cost.salidas_stock_report</field>
+        <field name="arch" type="xml">
+            <pivot string="Pivot HH por RMA" disable_linking="True">
+                <field name="repair_id" type="row"/>
+                <field name="name" type="row"/>
+                <field name="costo_total" type="measure"/>
+                <field name="product_qty" type="measure"/>
+                
+            </pivot>
+        </field>
+    </record>
+
+    <record id="method_repair_cost.report_hh_rma_graph" model="ir.ui.view">
+        <field name="model">method_repair_cost.rma_hh_report</field>
+        <field name="arch" type="xml">
+            <graph string="Gráfico HH por RMA">
+                <field name="employee_id" type="row"/>
+                <field name="costo_hora" type="measure"/>
+            </graph>
+        </field>
+    </record>    
+    <record id="method_repair_cost.report_salidas_stock_rma_graph" model="ir.ui.view">
+        <field name="model">method_repair_cost.salidas_stock_report</field>
+        <field name="arch" type="xml">
+            <graph string="Gráfico salidas de inventario por RMA">
+                <field name="repair_id" type="row"/>
+                <field name="repair_id" type="row"/>
+                <field name="costo_total" type="measure"/>
+            </graph>
+        </field>
+    </record> 
+
+
+
+    <record id="method_repair_cost.report_hh_rma_action" model="ir.actions.act_window">
+        <field name="name">HH por RMA</field>
+        <field name="res_model">method_repair_cost.rma_hh_report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">pivot,graph</field>
+        <field name="context">{'group_by_no_leaf': 1, 'group_by': []}</field>        
+    </record>
+
+    <record id="method_repair_cost.report_salidas_stock_rma_action" model="ir.actions.act_window">
+        <field name="name">Salidas de inventario por RMA</field>
+        <field name="res_model">method_repair_cost.salidas_stock_report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">pivot,graph</field>
+        <field name="context">{'group_by_no_leaf': 1, 'group_by': []}</field>        
+    </record>
+
+
+    <menuitem
+        id="method_repair_cost.report_menu"
+        name="Reportes"
+        parent="repair.menu_repair_order"
+        sequence="10"/>
+
+    <menuitem
+        id="method_repair_cost.report_hh_rma_menu"
+        name="HH por RMA"
+        action="method_repair_cost.report_hh_rma_action"
+        parent="method_repair_cost.report_menu"
+        sequence="4"/>
+    <menuitem
+        id="method_repair_cost.report_salidas_stock_rma_menu"
+        name="Salidas de inventario por RMA"
+        action="method_repair_cost.report_salidas_stock_rma_action"
+        parent="method_repair_cost.report_menu"
+        sequence="5"/>
+
+</odoo>

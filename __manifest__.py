@@ -31,7 +31,8 @@
         'views/stock_picking.xml',
         'views/templates.xml',
         'views/account_invoice.xml',
-        'views/repair_order.xml'
+        'views/repair_order.xml',
+        'report/reporte_hh_rma.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

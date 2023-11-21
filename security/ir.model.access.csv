@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 costo_horas_id,Costo Horas RMA,method_repair_cost.model_method_repair_cost_costo_hh,mrp.group_mrp_manager,1,1,1,1
+rma_hh_report_id,Horas por RMA,method_repair_cost.model_method_repair_cost_rma_hh_report,mrp.group_mrp_manager,1,1,1,1
+rma_stock_report_id,Salidas de inventario por RMA,method_repair_cost.model_method_repair_cost_salidas_stock_report,mrp.group_mrp_manager,1,1,1,1
