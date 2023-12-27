@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report 
+            string="Costeo" 
+            id="action_report_repair_order"
+            model="repair.order"
+            name="method_repair_cost.report_repairorder2_costeo"
+            file="method_repair_cost.report_repairorder"
+            report_type="qweb-html"
+            print_report_name="(
+                object.state == 'draft' and 'Costeo RMA - %s' % (object.name) or
+                'Costeo RMA - %s' % (object.name))"
+        />
+    </data>
+</odoo>

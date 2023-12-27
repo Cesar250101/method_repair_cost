@@ -13,6 +13,9 @@ class Ventas(models.Model):
     fecha_hh = fields.Date(string='Fecha')
     costo_hora = fields.Integer(string='Costo Hora')
     costo_total_hora = fields.Integer(string='Total Horas')
+    tipo =fields.Selection([('normal','Normal X Factor'),
+                            ('50','HH Extra 50%'),
+                            ('100','HH Extra 100%')],string='Tipo')
 
     @api.model_cr
     def init(self):
@@ -21,7 +24,8 @@ class Ventas(models.Model):
         self._cr.execute("""
             CREATE OR REPLACE VIEW %s AS (SELECT 
                     ROW_NUMBER() OVER() AS id,
-                    mrcch.employee_id,mrcch.cantidad_hh, mrcch.repair_id,mrcch.fecha_hh,mrcch.costo_hora,mrcch.costo_total_hora  
+                    mrcch.employee_id,mrcch.cantidad_hh, mrcch.repair_id,mrcch.fecha_hh,mrcch.costo_hora,mrcch.costo_total_hora,
+                    mrcch.tipo
                     from method_repair_cost_costo_hh mrcch,hr_employee he,repair_order ro 
                     where mrcch.employee_id =he.id 
                     and mrcch.repair_id =ro.id  

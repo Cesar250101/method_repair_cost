@@ -23,31 +23,50 @@
       <field name="context">{'responsible_id':uid}</field>
       <field name="arch" type="xml">
         <xpath expr="//notebook" position="inside">
-          <page name="costo_order" string="Costeo" groups="mrp.group_mrp_manager">
+          <page name="costo_order" string="Costeo" groups="mrp.group_mrp_manager,mrp.group_mrp_user">
             <group name="name" string="Costeo RMA">
               <group name="resumen" string="Resumen">
-                <field name='amount_untaxed' widget="monetary" string="Venta Neta"/>
+                <field name='amount_untaxed' string="Venta Neta"/>
                 <separator/>
-                <field name='costeo_inventario' widget="monetary"/>
-                <field name='costeo_facturas' widget="monetary"/>
-                <field name='costeo_hh' widget="monetary"/>
+                <field name='costeo_inventario'/>
+                <field name='costeo_facturas'/>
+                <field name='costeo_hh'/>
+                <field name='costeo_otros'/>
                 <separator/>
-                <field name='total_costo' widget="monetary"/>
-                <field name='margen' widget="monetary"/>
+                <field name='total_costo'/>
+                <field name='margen'/>
               </group>
-              <group name="costo_hh" string="Costo Hora Hombre">
-                <field name="costeo_hh_ids">
+            </group>          
+            <group name="costo_hh" string="Costo Hora Hombre">
+                <field name="costeo_hh_ids" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}">
+                
                   <tree editable="bottom">
                     <!-- <field name="employee_id" domain="[('type','=','service')]" required="True"/> -->
-                    <field name='fecha_hh'/>                    
+                    <field name='fecha_hh'/>       
+                    <field name='tipo'/>  
+                    <field name='obs'/>  
                     <field name="employee_id" required="True"/>
                     <field name='cantidad_hh'/>
+                    <field name='factor_hh' attrs="{'invisible': [('tipo', 'not in', ['normal'])]}"/>                    
                     <field name="costo_hora" string="Costo Hora" widget="monetary"/>
                     <field name="costo_total_hora" string="SubTotal Horas" widget="monetary"/>
                   </tree>
                 </field>
-              </group>
-            </group>
+            </group>     
+            <group name="otros_costos" string="Otros Costos">
+                <field name="otros_costos_ids" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}">
+                
+                  <tree editable="bottom">
+                    <field name='fecha'/>       
+                    <field name='tipo'/>  
+                    <field name='obs'/>  
+                    <field name="employee_id" required="True"/>
+                    <field name='cantidad'/>
+                    <field name="precio" string="Valor Unitario" widget="monetary"/>
+                    <field name="total" string="SubTotal" widget="monetary"/>
+                  </tree>
+                </field>
+            </group>                   
           </page>
         </xpath>
       </field>

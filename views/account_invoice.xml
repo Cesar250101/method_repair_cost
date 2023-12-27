@@ -6,9 +6,13 @@
       <field name="inherit_id" ref="account.invoice_supplier_form"/>
       <field name="context">{'responsible_id':uid}</field>
       <field name="arch" type="xml">
-        <field name="commercial_partner_id" position="after">
-          <field name="repair_id"/>
+        <field name="partner_bank_id" position="after">
+          <field name="rma_lines"/>
         </field>
+
+        <xpath expr="//field[@name='analytic_tag_ids']" position="after">
+          <field name="repair_id" attrs="{'column_invisible': [('parent.rma_lines', '=',False )],'required': [('parent.rma_lines', '!=', False)]}"/>
+        </xpath>
       </field>
     </record>   
   </data>

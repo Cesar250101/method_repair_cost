@@ -33,6 +33,9 @@
         'views/account_invoice.xml',
         'views/repair_order.xml',
         'report/reporte_hh_rma.xml',
+        'views/hr_employee.xml',
+        'report/repair_reports.xml',
+        'report/repair_templates_repair_order.xml',        
     ],
     # only loaded in demonstration mode
     'demo': [
