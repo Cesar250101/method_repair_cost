@@ -26,15 +26,20 @@
           <page name="costo_order" string="Costeo" groups="mrp.group_mrp_manager,mrp.group_mrp_user">
             <group name="name" string="Costeo RMA">
               <group name="resumen" string="Resumen">
-                <field name='amount_untaxed' string="Venta Neta"/>
+                <field name='amount_untaxed' widget="monetary" string="Venta Neta" class="oe_green oe_right strong text-success" style="color:green;font-size: 12px;font-weight: 900;"/>
                 <separator/>
-                <field name='costeo_inventario'/>
-                <field name='costeo_facturas'/>
-                <field name='costeo_hh'/>
-                <field name='costeo_otros'/>
+                <field name='costeo_inventario' class="oe_right text-success"/>
+                <field name='costeo_facturas' class="oe_right text-success"/>
+                <field name='costeo_hh_normal' class="oe_right text-success"/>
+                <field name='costeo_hh_50' class="oe_right text-success"/>
+                <field name='costeo_hh_100' class="oe_right text-success"/>
+                <field name='costeo_otros' class="oe_right text-success"/>
                 <separator/>
-                <field name='total_costo'/>
-                <field name='margen'/>
+                <field name='total_costo' class="oe_green oe_right strong text-success" style="color:green;font-size: 12px;font-weight: 900;"/>
+                <field name='margen' class="oe_green oe_right strong text-success" style="color:green;font-size: 12px;font-weight: 900;"/>
+              </group>
+              <group name="apertura_costo" string="Apertura Costeo Inventario">
+                <field name='categ_texto_costo' class="text-success"/>                
               </group>
             </group>          
             <group name="costo_hh" string="Costo Hora Hombre">

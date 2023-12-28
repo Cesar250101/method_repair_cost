@@ -5,10 +5,13 @@ from odoo import models, fields, api
 class Rma(models.Model):
     _inherit = 'repair.order'
 
-    costeo_inventario = fields.Integer(string='Costeo Salidas Inventario',compute='_compute_costeo_inventario')
-    costeo_facturas = fields.Integer(string='Costeo Facturas de Compra',compute='_compute_costeo_facturas')
-    costeo_hh = fields.Integer(string='Costeo Horas Hombre',compute='_compute_costeo_hh')
-    costeo_otros = fields.Integer(string='Costeo Otros',compute='_compute_costeo_otros')
+    costeo_inventario = fields.Integer(string='Costeo Salidas Inventario',compute='_compute_costeo_inventario',store=True)
+    costeo_facturas = fields.Integer(string='Costeo Facturas de Compra',compute='_compute_costeo_facturas',store=True)
+    costeo_hh = fields.Integer(string='Costeo Horas Hombre',compute='_compute_costeo_hh',store=True)
+    costeo_hh_normal = fields.Integer(string='Costeo Horas Normal',compute='_compute_costeo_hh',store=True)
+    costeo_hh_50 = fields.Integer(string='Costeo Horas 50%',compute='_compute_costeo_hh',store=True)
+    costeo_hh_100 = fields.Integer(string='Costeo Horas H100%',compute='_compute_costeo_hh',store=True)
+    costeo_otros = fields.Integer(string='Costeo Otros',compute='_compute_costeo_otros',store=True)
     costeo_hh_ids = fields.One2many(comodel_name='method_repair_cost.costo_hh',inverse_name= 'repair_id', string='Costeo HH',
                                     copy=True, readonly=True, states={'draft': [('readonly', False)]})
     picking_ids = fields.One2many(comodel_name='stock.picking', inverse_name= 'repair_id', string='Salidas Inventario')
@@ -17,6 +20,7 @@ class Rma(models.Model):
     margen = fields.Integer(string='Margen',compute='_compute_total_costo',store=True)
     otros_costos_ids = fields.One2many(comodel_name='method_repair_cost.otros_costo_rma',inverse_name= 'repair_id', string='Otros Costos',
         copy=True, readonly=True, states={'draft': [('readonly', False)]})
+    categ_texto_costo = fields.Text(string='Apertura costeo inventario',compute='_compute_costeo_inventario',store=True)
 
 
     @api.depends('costeo_hh_ids','picking_ids','invoice_ids','amount_untaxed')
@@ -34,9 +38,21 @@ class Rma(models.Model):
     @api.depends('costeo_hh_ids','amount_untaxed')
     def _compute_costeo_hh(self):
         costo_hh=0
+        costo_hh_normal=0
+        costo_hh_50=0
+        costo_hh_100=0
         for i in self.costeo_hh_ids:
             costo_hh+=i.costo_total_hora    
+            if i.tipo=="normal":
+                costo_hh_normal+=i.costo_total_hora
+            elif i.tipo=="50":
+                costo_hh_50+=i.costo_total_hora
+            elif i.tipo=="100":
+                costo_hh_100+=i.costo_total_hora                
         self.costeo_hh=costo_hh
+        self.costeo_hh_normal=costo_hh_normal
+        self.costeo_hh_50=costo_hh_50
+        self.costeo_hh_100=costo_hh_100
         self.total_costo=self.costeo_hh+self.costeo_inventario+self.costeo_facturas
         self.margen=self.amount_untaxed-self.total_costo
 
@@ -58,8 +74,31 @@ class Rma(models.Model):
             for l in i.move_ids_without_package:
                 costo_inventario+=l.product_qty*l.product_id.standard_price
         self.costeo_inventario=costo_inventario
-        self.total_costo=self.costeo_hh+self.costeo_inventario+self.costeo_facturas
+        self.total_costo=self.costeo_hh+self.costeo_inventario+self.costeo_facturas+self.costeo_otros
         self.margen=self.amount_untaxed-self.total_costo
+        
+        sql="""
+            select pc.name Categoria,coalesce(sum(sm.product_qty*(select cost from product_price_history pph 
+                                                            where pph.product_id=pp.id
+                                                            order by datetime desc  limit 1)),0) costo
+            from stock_picking sp,stock_move sm,product_product pp,product_template pt,product_category pc  
+            where sp.repair_id ={}
+            and sp.id =sm.picking_id 
+            and sm.product_id =pp.id 
+            and pp.product_tmpl_id =pt.id 
+            and pt.categ_id =pc.id 
+            group by pc.name
+
+            """.format(self.id)
+        self.env.cr.execute(sql)
+        datos=self.env.cr.fetchall()
+        texto=""
+        for dato in datos:
+            texto+=dato[0] +" : "+str(dato[1])+"\n"
+        self.categ_texto_costo=texto
+
+
+
 
     @api.one
     @api.depends('invoice_ids','amount_untaxed')
