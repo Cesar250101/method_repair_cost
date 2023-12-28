@@ -6,18 +6,27 @@ class Rma(models.Model):
     _inherit = 'repair.order'
 
     costeo_inventario = fields.Integer(string='Costeo Salidas Inventario',compute='_compute_costeo_inventario',store=True)
+    costeo_inventario_porc = fields.Float(string='% Costeo Salidas Inventario',compute='_compute_costeo_inventario',store=True)
     costeo_facturas = fields.Integer(string='Costeo Facturas de Compra',compute='_compute_costeo_facturas',store=True)
+    costeo_facturas_porc = fields.Float(string='% Costeo Facturas Compra',compute='_compute_costeo_facturas',store=True)    
     costeo_hh = fields.Integer(string='Costeo Horas Hombre',compute='_compute_costeo_hh',store=True)
+    costeo_hh_porc = fields.Float(string='% Costeo Horas Hombre',compute='_compute_costeo_hh',store=True)        
     costeo_hh_normal = fields.Integer(string='Costeo Horas Normal',compute='_compute_costeo_hh',store=True)
+    costeo_hh_normal_porc = fields.Float(string='% Costeo Horas Hombre',compute='_compute_costeo_hh',store=True)            
     costeo_hh_50 = fields.Integer(string='Costeo Horas 50%',compute='_compute_costeo_hh',store=True)
+    costeo_hh_50_porc = fields.Float(string='% Costeo Horas Hombre',compute='_compute_costeo_hh',store=True)                
     costeo_hh_100 = fields.Integer(string='Costeo Horas H100%',compute='_compute_costeo_hh',store=True)
+    costeo_hh_100_porc = fields.Float(string='% Costeo Horas Hombre',compute='_compute_costeo_hh',store=True)                    
     costeo_otros = fields.Integer(string='Costeo Otros',compute='_compute_costeo_otros',store=True)
+    costeo_otros_porc = fields.Float(string='% Costeo Horas Hombre',compute='_compute_costeo_otros',store=True)                        
     costeo_hh_ids = fields.One2many(comodel_name='method_repair_cost.costo_hh',inverse_name= 'repair_id', string='Costeo HH',
                                     copy=True, readonly=True, states={'draft': [('readonly', False)]})
     picking_ids = fields.One2many(comodel_name='stock.picking', inverse_name= 'repair_id', string='Salidas Inventario')
     invoice_ids = fields.One2many(comodel_name='account.invoice.line', inverse_name='repair_id', string='Facturas')
     total_costo = fields.Integer(string='Costo Total',compute='_compute_total_costo',store=True)
+    total_costo_porc = fields.Float(string='% Costeo Horas Hombre',compute='_compute_total_costo',store=True)                            
     margen = fields.Integer(string='Margen',compute='_compute_total_costo',store=True)
+    margen_porc = fields.Float(string='% Costeo Horas Hombre',compute='_compute_total_costo',store=True)                                
     otros_costos_ids = fields.One2many(comodel_name='method_repair_cost.otros_costo_rma',inverse_name= 'repair_id', string='Otros Costos',
         copy=True, readonly=True, states={'draft': [('readonly', False)]})
     categ_texto_costo = fields.Text(string='Apertura costeo inventario',compute='_compute_costeo_inventario',store=True)
@@ -33,6 +42,11 @@ class Rma(models.Model):
         total_costo=self.costeo_facturas+self.costeo_hh+self.costeo_inventario+self.costeo_otros
         self.total_costo=total_costo
         self.margen=self.amount_untaxed-total_costo
+        try:
+            self.total_costo_porc=round(((total_costo/self.amount_untaxed)*100),2)
+            self.margen_porc=round(((self.margen/self.amount_untaxed)*100),2)
+        except:
+            pass
 
     @api.one
     @api.depends('costeo_hh_ids','amount_untaxed')
@@ -41,6 +55,12 @@ class Rma(models.Model):
         costo_hh_normal=0
         costo_hh_50=0
         costo_hh_100=0
+
+        costo_hh_porc=0
+        costo_hh_normal_porc=0
+        costo_hh_50_porc=0
+        costo_hh_100_porc=0
+
         for i in self.costeo_hh_ids:
             costo_hh+=i.costo_total_hora    
             if i.tipo=="normal":
@@ -56,6 +76,23 @@ class Rma(models.Model):
         self.total_costo=self.costeo_hh+self.costeo_inventario+self.costeo_facturas
         self.margen=self.amount_untaxed-self.total_costo
 
+        try:
+            costo_hh_porc=round((costo_hh/self.amount_untaxed)*100,2)
+            costo_hh_normal_porc=round((costo_hh_normal/self.amount_untaxed)*100,2)
+            costo_hh_50_porc=round((costo_hh_50/self.amount_untaxed)*100,2)
+            costo_hh_100_porc=round((costo_hh_100/self.amount_untaxed)*100,2)
+
+            self.costeo_hh_porc=costo_hh_porc
+            self.costeo_hh_normal_porc=costo_hh_normal_porc
+            self.costeo_hh_50_porc=costo_hh_50_porc
+            self.costeo_hh_100_porc=costo_hh_100_porc
+
+
+            self.total_costo_porc=round((self.total_costo/self.amount_untaxed)*100,2)
+            self.margen_porc=round((self.margen/self.amount_untaxed)*100,2)
+        except:
+            pass
+
     @api.one
     @api.depends('otros_costos_ids','amount_untaxed')
     def _compute_costeo_otros(self):
@@ -63,6 +100,10 @@ class Rma(models.Model):
         for i in self.otros_costos_ids:
             costo_hh+=i.total    
         self.costeo_otros=costo_hh
+        try:
+            self.costeo_otros_porc=round(((costo_hh/self.amount_untaxed)*100),2)
+        except:
+            pass
         self.total_costo=self.costeo_hh+self.costeo_inventario+self.costeo_facturas+self.costeo_otros
         self.margen=self.amount_untaxed-self.total_costo        
 
@@ -70,32 +111,38 @@ class Rma(models.Model):
     @api.depends('picking_ids','amount_untaxed')
     def _compute_costeo_inventario(self):
         costo_inventario=0
+        costo_inventario_porc=0.00
         for i in self.picking_ids:
             for l in i.move_ids_without_package:
                 costo_inventario+=l.product_qty*l.product_id.standard_price
         self.costeo_inventario=costo_inventario
+        try:
+            costo_inventario_porc=(costo_inventario/self.amount_untaxed)*100
+            self.costeo_inventario_porc=costo_inventario_porc
+        except:
+            pass
         self.total_costo=self.costeo_hh+self.costeo_inventario+self.costeo_facturas+self.costeo_otros
         self.margen=self.amount_untaxed-self.total_costo
-        
-        sql="""
-            select pc.name Categoria,coalesce(sum(sm.product_qty*(select cost from product_price_history pph 
-                                                            where pph.product_id=pp.id
-                                                            order by datetime desc  limit 1)),0) costo
-            from stock_picking sp,stock_move sm,product_product pp,product_template pt,product_category pc  
-            where sp.repair_id ={}
-            and sp.id =sm.picking_id 
-            and sm.product_id =pp.id 
-            and pp.product_tmpl_id =pt.id 
-            and pt.categ_id =pc.id 
-            group by pc.name
+        if self.id:
+            sql="""
+                select pc.name Categoria,coalesce(sum(sm.product_qty*(select cost from product_price_history pph 
+                                                                where pph.product_id=pp.id
+                                                                order by datetime desc  limit 1)),0) costo
+                from stock_picking sp,stock_move sm,product_product pp,product_template pt,product_category pc  
+                where sp.repair_id ={}
+                and sp.id =sm.picking_id 
+                and sm.product_id =pp.id 
+                and pp.product_tmpl_id =pt.id 
+                and pt.categ_id =pc.id 
+                group by pc.name
 
-            """.format(self.id)
-        self.env.cr.execute(sql)
-        datos=self.env.cr.fetchall()
-        texto=""
-        for dato in datos:
-            texto+=dato[0] +" : "+str(dato[1])+"\n"
-        self.categ_texto_costo=texto
+                """.format(self.id)
+            self.env.cr.execute(sql)
+            datos=self.env.cr.fetchall()
+            texto=""
+            for dato in datos:
+                texto+=dato[0] +" : "+str(dato[1])+"\n"
+            self.categ_texto_costo=texto
 
 
 
@@ -104,9 +151,15 @@ class Rma(models.Model):
     @api.depends('invoice_ids','amount_untaxed')
     def _compute_costeo_facturas(self):
         costo_facturas=0
+        costo_facturas_porc=0.00
         for i in self.invoice_ids:
             costo_facturas+=i.price_subtotal
         self.costeo_facturas=costo_facturas
+        try:
+            costo_facturas_porc=round((costo_facturas/self.amount_untaxed)*100,2)
+            self.costeo_facturas_porc=costo_facturas_porc
+        except:
+            pass
         self.total_costo=self.costeo_hh+self.costeo_inventario+self.costeo_facturas
         self.margen=self.amount_untaxed-self.total_costo
 

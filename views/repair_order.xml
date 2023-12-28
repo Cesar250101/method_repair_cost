@@ -24,21 +24,73 @@
       <field name="arch" type="xml">
         <xpath expr="//notebook" position="inside">
           <page name="costo_order" string="Costeo" groups="mrp.group_mrp_manager,mrp.group_mrp_user">
-            <group name="name" string="Costeo RMA">
-              <group name="resumen" string="Resumen">
-                <field name='amount_untaxed' widget="monetary" string="Venta Neta" class="oe_green oe_right strong text-success" style="color:green;font-size: 12px;font-weight: 900;"/>
-                <separator/>
-                <field name='costeo_inventario' class="oe_right text-success"/>
-                <field name='costeo_facturas' class="oe_right text-success"/>
-                <field name='costeo_hh_normal' class="oe_right text-success"/>
-                <field name='costeo_hh_50' class="oe_right text-success"/>
-                <field name='costeo_hh_100' class="oe_right text-success"/>
-                <field name='costeo_otros' class="oe_right text-success"/>
-                <separator/>
-                <field name='total_costo' class="oe_green oe_right strong text-success" style="color:green;font-size: 12px;font-weight: 900;"/>
-                <field name='margen' class="oe_green oe_right strong text-success" style="color:green;font-size: 12px;font-weight: 900;"/>
+            <style>
+            #resumen{
+              padding:10px;
+              margin-right:10px;
+              <!-- box-shadow: 5px 5px 5px #888; -->
+            }
+            </style>          
+            <group name="name" string="Costeo RMA" style="box-shadow: 5px 5px 5px #888;">
+              <group name="resumen" string="Resumen" style="width:60%;">
+                <table id="resumen" style="width:100%">
+                  <tr>
+                    <th>Descripción</th>
+                    <th style="width:20%; text-align: center;" >Monto</th>
+                    <th style="width:40%;">%</th>
+                  </tr>
+                  <tr>
+                    <td><label for="amount_untaxed"/></td>
+                    <td ><field name='amount_untaxed' widget="monetary" string="Venta Neta" class="oe_green oe_center strong text-success" style="color:green;font-size: 12px;font-weight: 900;"/></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><label for="costeo_inventario"/></td>
+                    <td align="center"><field name='costeo_inventario' class="oe_center text-success"/></td>
+                    <td><field name="costeo_inventario_porc" class="oe_center text-primary" widget="progressbar"/></td>
+                  </tr>
+
+                  <tr>
+                    <td><label for="costeo_facturas"/></td>
+                    <td align="center"><field name='costeo_facturas' class="oe_center text-success"/></td>
+                    <td><field name="costeo_facturas_porc" class="oe_center text-primary" widget="progressbar"/></td>
+                  </tr>
+                  <tr>
+                    <td><label for="costeo_hh_normal"/></td>
+                    <td align="center"><field name='costeo_hh_normal' class="oe_center text-success"/></td>
+                    <td><field name="costeo_hh_normal_porc" class="oe_center text-primary" widget="progressbar"/></td>
+                  </tr>
+                  <tr>
+                    <td><label for="costeo_hh_50"/></td>
+                    <td align="center"><field name='costeo_hh_50' class="oe_center text-success"/></td>
+                    <td><field name="costeo_hh_50_porc" class="oe_center text-primary" widget="progressbar"/></td>
+                  </tr>
+                  <tr>
+                    <td><label for="costeo_hh_100"/></td>
+                    <td align="center"><field name='costeo_hh_100' class="oe_center text-success"/></td>
+                    <td><field name="costeo_hh_100_porc" class="oe_center text-primary" widget="progressbar"/></td>
+                  </tr>
+                  <tr>
+                    <td><label for="costeo_otros"/></td>
+                    <td align="center"><field name='costeo_otros' class="oe_center text-success"/></td>
+                    <td><field name="costeo_otros_porc" class="oe_center text-primary" widget="progressbar"/></td>
+                  </tr>                                                      
+                  <tr>
+                    <td><label for="total_costo"/></td>
+                    <td align="center"><field name='total_costo' class="oe_green oe_center strong text-success" style="color:green;font-size: 12px;font-weight: 900;"/></td>
+                    <td><field name="total_costo_porc" class="oe_center text-primary" widget="progressbar"/></td>
+                  </tr>                                                      
+
+                  <tr>
+                    <td><label for="margen"/></td>
+                    <td align="center"><field name='margen' class="oe_green oe_center strong text-success" style="color:green;font-size: 12px;font-weight: 900;"/></td>
+                    <td><field name="margen_porc" class="oe_center text-primary" widget="progressbar"/></td>
+                  </tr>                                                      
+
+                </table>
+
               </group>
-              <group name="apertura_costo" string="Apertura Costeo Inventario">
+              <group name="apertura_costo" string="Apertura Costeo Inventario" style="padding-left:10px;width:40%;">
                 <field name='categ_texto_costo' class="text-success"/>                
               </group>
             </group>          
