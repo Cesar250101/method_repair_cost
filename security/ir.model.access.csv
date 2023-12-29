@@ -5,3 +5,4 @@ rma_hh_report_id,Horas por RMA,method_repair_cost.model_method_repair_cost_rma_h
 rma_stock_report_id,Salidas de inventario por RMA,method_repair_cost.model_method_repair_cost_salidas_stock_report,mrp.group_mrp_manager,1,1,1,1
 rma_otros_costos_id,Otros Costos RMA,method_repair_cost.model_method_repair_cost_otros_costo_rma,mrp.group_mrp_manager,1,1,1,1
 rma_otros_costos_user_id,user Otros Costos RMA,method_repair_cost.model_method_repair_cost_otros_costo_rma,mrp.group_mrp_user,1,0,0,0
+rma_general_costos_id,Reporte General RMA,method_repair_cost.model_method_repair_cost_report_general_rma,mrp.group_mrp_manager,1,1,1,1
